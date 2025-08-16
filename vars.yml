@@ -10,10 +10,9 @@ haproxy_stats_user: "admin"
 haproxy_stats_pass: "changeme"
 
 # DNS
-bastion_ip: "10.10.70.70"
+bastion_ip: "10.0.2.10"
 dns_forwarders:
   - "8.8.8.8"
-  - "8.8.4.4"
 
 # butane config
 chrony_servers:
@@ -27,7 +26,7 @@ single_node: true
 masters_schedulable: true
 
 # OCP install-config
-machine_network_cidr: "10.10.0.0/16"
+machine_network_cidr: "10.0.2.0/24"
 cluster_network_cidr: "10.128.0.0/14"
 cluster_network_hostprefix: 23
 service_network_cidr: "172.30.0.0/16"
@@ -35,14 +34,14 @@ network_type: "OVNKubernetes"
 fips: false
 
 #OCP Node Config
-rendezvous_ip: "10.10.70.71"
+rendezvous_ip: "10.0.2.11"
 defaults:
-  nic_name: "enp1s0"
+  nic_name: "enp0s3"
   root_device: "/dev/sda"
-  prefix_length: 16
+  prefix_length: 24
   dhcp: false
-  gateway: "10.10.0.1"
-  dns_servers: ["192.168.70.70"]
+  gateway: "10.0.2.2"
+  dns_servers: ["10.0.2.10"]
   nic_type: "ethernet"
   nic_state: "up"
   route_destination: "0.0.0.0/0"
@@ -50,8 +49,8 @@ defaults:
 
 masters:
   - name: "sno"
-    ip: "10.10.70.71"
-    mac: "56:6f:54:a1:00:12"
+    ip: "10.0.2.11"
+    mac: "08:00:27:6E:FE:31"
 
 workers: []
 

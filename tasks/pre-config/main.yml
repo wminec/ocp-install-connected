@@ -57,7 +57,7 @@
 # -------- OpenShift Installer --------
 - name: Download OpenShift installer tarball
   get_url:
-    url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/install-dir-linux-{{ ocp_version }}.tar.gz"
+    url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/openshift-install-linux-{{ ocp_version }}.tar.gz"
     dest: "{{ working_dir }}/install-dir-linux-{{ ocp_version }}.tar.gz"
     mode: '0644'
 
