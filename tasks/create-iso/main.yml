@@ -1,10 +1,10 @@
 ---
 - name: Normalize install dir
   ansible.builtin.set_fact:
-    _install_dir: "{{ install_dir | default(working_dir ~ '/install-dir') }}"
-    _iso_path: "{{ install_dir | default(working_dir ~ '/install-dir') }}/agent.x86_64.iso"
+    _install_dir: "{{ install_dir | default(working_dir ~ '/install_dir') }}"
+    _iso_path: "{{ install_dir | default(working_dir ~ '/install_dir') }}/agent.x86_64.iso"
 
-- name: Ensure install-dir exists
+- name: Ensure install_dir exists
   ansible.builtin.file:
     path: "{{ _install_dir }}"
     state: directory

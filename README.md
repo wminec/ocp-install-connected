@@ -18,12 +18,12 @@ Bastion에서 **로컬 실행**하여 OpenShift를 **Agent-Based** 방식으로 
 - SELinux/Firewalld 비활성화(옵션)
 - **HAProxy** 구성 (SNO/HA 템플릿 분기)
 - **BIND (named)** 구성: `named.conf`, `named.rfc1912.zones`, **forward zone** 템플릿 배포 + 백업/검증
-- **AgentConfig** (`agent-config.yaml`) 생성 (+ `install-dir`로 복사)
+- **AgentConfig** (`agent-config.yaml`) 생성 (+ `install_dir`로 복사)
 - **InstallConfig** (`install-config.yaml`) 생성  
   - `single_node: true` → `controlPlane.replicas=1`, `compute.replicas=0`  
   - `single_node: false` → `controlPlane.replicas=3`, `compute.replicas=workers 개수`
   - SSH 키 자동 생성/활용, Pull-secret(파일 또는 변수) 지원
-- **Chrony MachineConfig**: Butane `.bu` → YAML 변환 → `install-dir/openshift/` 배치
+- **Chrony MachineConfig**: Butane `.bu` → YAML 변환 → `install_dir/openshift/` 배치
 - **Agent ISO** 생성: `openshift-install agent create image`
 - Post-install 편의:
   - `oc` bash-completion 설치

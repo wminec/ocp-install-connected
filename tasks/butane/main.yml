@@ -10,7 +10,7 @@
     mode: "0755"
   loop:
     - "{{ working_dir }}/butane"                 # save .bu
-    - "{{ working_dir }}/install-dir/openshift"  # save .yaml
+    - "{{ working_dir }}/install_dir/openshift"  # save .yaml
 
 # create .bu 
 - name: Render chrony .bu per role
@@ -26,7 +26,7 @@
 - name: Build MachineConfig YAML from .bu per role
   ansible.builtin.command: >
     butane {{ working_dir }}/butane/99-{{ item }}-chrony.bu
-    -o {{ working_dir }}/install-dir/openshift/99-{{ item }}-chrony.yaml
+    -o {{ working_dir }}/install_dir/openshift/99-{{ item }}-chrony.yaml
   loop: "{{ _chrony_roles }}"
   changed_when: false
 
@@ -34,5 +34,5 @@
   ansible.builtin.debug:
     msg:
       - "BU : {{ working_dir }}/butane/99-{{ item }}-chrony.bu"
-      - "YAML: {{ working_dir }}/install-dir/openshift/99-{{ item }}-chrony.yaml"
+      - "YAML: {{ working_dir }}/install_dir/openshift/99-{{ item }}-chrony.yaml"
   loop: "{{ _chrony_roles }}"

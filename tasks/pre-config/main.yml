@@ -38,8 +38,8 @@
   loop:
     - "{{ working_dir }}"
     - "{{ working_dir }}/templates"
-    - "{{ working_dir }}/install-dir"
-    - "{{ working_dir }}/install-dir/openshift"
+    - "{{ working_dir }}/install_dir"
+    - "{{ working_dir }}/install_dir/openshift"
 
 # -------- OpenShift Client (oc) --------
 - name: Download OpenShift client tarball
@@ -58,12 +58,12 @@
 - name: Download OpenShift installer tarball
   get_url:
     url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/openshift-install-linux-{{ ocp_version }}.tar.gz"
-    dest: "{{ working_dir }}/install-dir-linux-{{ ocp_version }}.tar.gz"
+    dest: "{{ working_dir }}/install_dir-linux-{{ ocp_version }}.tar.gz"
     mode: '0644'
 
 - name: Extract OpenShift installer
   unarchive:
-    src: "{{ working_dir }}/install-dir-linux-{{ ocp_version }}.tar.gz"
+    src: "{{ working_dir }}/install_dir-linux-{{ ocp_version }}.tar.gz"
     dest: "/usr/local/bin"
     remote_src: true
 

@@ -21,16 +21,16 @@
     group: root
     mode: "0644"
 
-- name: Ensure install-dir exists for agent-config
+- name: Ensure install_dir exists for agent-config
   ansible.builtin.file:
-    path: "{{ working_dir }}/install-dir"
+    path: "{{ working_dir }}/install_dir"
     state: directory
     mode: "0755"
 
-- name: Copy agent-config.yaml into install-dir
+- name: Copy agent-config.yaml into install_dir
   ansible.builtin.copy:
     src: "{{ working_dir }}/agent-config.yaml"
-    dest: "{{ working_dir }}/install-dir/agent-config.yaml"
+    dest: "{{ working_dir }}/install_dir/agent-config.yaml"
     owner: root
     group: root
     mode: "0644"

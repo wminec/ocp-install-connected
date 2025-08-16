@@ -1,8 +1,8 @@
 ---
 - name: Normalize post-install paths
   ansible.builtin.set_fact:
-    _install_dir: "{{ install_dir | default(working_dir ~ '/install-dir') }}"
-    _auth_dir: "{{ (install_dir | default(working_dir ~ '/install-dir')) ~ '/auth' }}"
+    _install_dir: "{{ install_dir | default(working_dir ~ '/install_dir') }}"
+    _auth_dir: "{{ (install_dir | default(working_dir ~ '/install_dir')) ~ '/auth' }}"
     _home: "{{ ansible_env.HOME }}"
     _kube_dir: "{{ ansible_env.HOME ~ '/.kube' }}"
 
