@@ -6,7 +6,9 @@
 > - Python **3.9**
 > - Ansible **core 2.14**
 
-Bastion에서 **로컬 실행**하여 OpenShift를 **Agent-Based** 방식으로 설치하기 위한 준비 작업(Pre/Post 포함)을 자동화합니다.
+Bastion에서 **로컬 실행**하여 OpenShift를 **Agent-Based** 방식으로 설치하기 위한 준비 작업(Pre/Post 포함)을 자동화합니다.  
+반드시 설치를 위한 "pull-secret.json" 파일을 만들어야 합니다.  
+
 
 ---
 
