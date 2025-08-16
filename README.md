@@ -15,7 +15,7 @@ dnf install epel-release -y
 dnf install ansible -y
 git clone https://github.com/wminec/ocp-install-connected.git
 
-pull-secret.json
+vi pull-secret.json
 ```
 
 ---
