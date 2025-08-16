@@ -1,0 +1,38 @@
+- name: Deploy named.conf
+  ansible.builtin.template:
+    src: templates/named.conf.j2
+    dest: /etc/named.conf
+    owner: root
+    group: named
+    mode: "0640"
+    backup: true
+    validate: "named-checkconf %s"
+  notify: Restart named
+
+- name: Deploy rfc1912.zones
+  ansible.builtin.template:
+    src: templates/named.rfc1912.zones.j2
+    dest: /etc/named.rfc1912.zones
+    owner: root
+    group: named
+    mode: "0640"
+    backup: true
+    newline_sequence: "\n"
+    validate: "named-checkconf %s"
+  notify: Restart named
+
+- name: Deploy forward zone
+  ansible.builtin.template:
+    src: "templates/forward.zone.j2"
+    dest: "/var/named/{{ cluster_domain }}.{{ base_domain }}.zone"
+    owner: root
+    group: named
+    mode: "0640"
+    backup: true
+  notify: Restart named
+
+- name: Ensure named service enabled and started
+  ansible.builtin.service:
+    name: named
+    enabled: true
+    state: started

@@ -1,0 +1,37 @@
+---
+- name: Normalize install dir
+  ansible.builtin.set_fact:
+    _install_dir: "{{ install_dir | default(working_dir ~ '/install-dir') }}"
+    _iso_path: "{{ install_dir | default(working_dir ~ '/install-dir') }}/agent.x86_64.iso"
+
+- name: Ensure install-dir exists
+  ansible.builtin.file:
+    path: "{{ _install_dir }}"
+    state: directory
+    mode: "0755"
+
+# 1) create cluster-manifests
+- name: Generate cluster-manifests
+  ansible.builtin.command: >
+    openshift-install agent create cluster-manifests
+    --dir {{ _install_dir }}
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  args:
+    chdir: "{{ _install_dir }}"
+  changed_when: true
+
+# 3) create ISO
+- name: Create Agent ISO
+  ansible.builtin.command: >
+    openshift-install --dir {{ _install_dir }} agent create image
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  args:
+    chdir: "{{ _install_dir }}"
+  changed_when: true
+
+- name: Show ISO path
+  ansible.builtin.debug:
+    msg:
+      - "ISO generated at: {{ _iso_path }}"

@@ -1,0 +1,44 @@
+---
+- name: Bastion end-to-end setup (DNS, HAProxy, AgentConfig)
+  hosts: localhost
+  connection: local
+  become: true
+  gather_facts: true
+  vars_files:
+    - vars.yml
+
+  handlers:
+    - import_tasks: handlers/main.yml
+
+  tasks:
+#    - name: Setup Bastion Packages and Tools
+#      ansible.builtin.import_tasks: tasks/pre-config/main.yml
+#      tags: [pre-config]
+#
+#    - name: Configure DNS (BIND/named)
+#      ansible.builtin.import_tasks: tasks/dns/main.yml
+#      tags: [dns]
+#
+#    - name: Configure HAProxy
+#      ansible.builtin.import_tasks: tasks/haproxy/main.yml
+#      tags: [haproxy]
+#
+#    - name: Generate AgentConfig
+#      ansible.builtin.import_tasks: tasks/agent-config/main.yml
+#      tags: [agent_config]
+
+#    - name: Generate InstallConfig
+#      ansible.builtin.import_tasks: tasks/install-config/main.yml
+#      tags: [install-config]
+
+#    - name: Generate butane yaml files
+#      ansible.builtin.import_tasks: tasks/butane/main.yml
+#      tags: [butane]
+
+#    - name: Generate iso
+#      ansible.builtin.import_tasks: tasks/create-iso/main.yml
+#      tags: [iso]
+
+    - name: Post Config
+      ansible.builtin.import_tasks: tasks/post-config/main.yml
+      tags: [post-config]

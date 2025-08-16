@@ -1,0 +1,11 @@
+---
+# handlers file for bastion-ocp-install-connected
+- name: Restart haproxy
+  ansible.builtin.service:
+    name: haproxy
+    state: restarted
+
+- name: Restart named
+  ansible.builtin.service:
+    name: named
+    state: restarted

@@ -1,0 +1,26 @@
+---
+# 1) 기존 설정 존재 여부 확인
+- name: Check if /etc/haproxy/haproxy.cfg exists
+  ansible.builtin.stat:
+    path: /etc/haproxy/haproxy.cfg
+  register: hap_cfg
+
+# 2) 새 템플릿 배포 (배포 전 문법 검증)
+- name: Deploy OCP haproxy.cfg (validated)
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/tasks/haproxy/templates/haproxy.cfg.j2"
+    dest: /etc/haproxy/haproxy.cfg
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+    validate: "haproxy -c -f %s"   # 구성 검증
+    newline_sequence: "\n"
+  notify: Restart haproxy
+
+# 3) 서비스 활성화/기동
+- name: Enable and start haproxy
+  ansible.builtin.service:
+    name: haproxy
+    enabled: true
+    state: started

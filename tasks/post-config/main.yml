@@ -1,0 +1,53 @@
+---
+- name: Normalize post-install paths
+  ansible.builtin.set_fact:
+    _install_dir: "{{ install_dir | default(working_dir ~ '/install-dir') }}"
+    _auth_dir: "{{ (install_dir | default(working_dir ~ '/install-dir')) ~ '/auth' }}"
+    _home: "{{ ansible_env.HOME }}"
+    _kube_dir: "{{ ansible_env.HOME ~ '/.kube' }}"
+
+
+- name: Generate oc bash completion script
+  ansible.builtin.command: /usr/local/bin/oc completion bash
+  register: _oc_completion
+  changed_when: false
+
+- name: Install oc completion to /etc/bash_completion.d/oc
+  ansible.builtin.copy:
+    dest: /etc/bash_completion.d/oc
+    content: "{{ _oc_completion.stdout }}"
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+
+- name: Ensure ~/.kube exists
+  ansible.builtin.file:
+    path: "{{ _kube_dir }}"
+    state: directory
+    mode: "0700"
+  become: true
+
+- name: Copy kubeconfig into ~/.kube/config
+  ansible.builtin.copy:
+    src: "{{ _auth_dir }}/kubeconfig"
+    dest: "{{ _kube_dir }}/config"
+    owner: root
+    group: root
+    mode: "0600"
+    remote_src: true
+  become: true
+
+- name: Show current DNS and guide (NetworkManager)
+  ansible.builtin.debug:
+    msg: "Change the bastion's DNS server to the bastion itself."
+
+- name: Read kubeadmin-password
+  become: true
+  ansible.builtin.slurp:
+    path: "{{ _auth_dir }}/kubeadmin-password"
+  register: _kubeadmin_pw
+
+- name: Show kubeadmin-password
+  ansible.builtin.debug:
+    msg: "kubeadmin password: {{ _kubeadmin_pw.content | b64decode | trim }}"

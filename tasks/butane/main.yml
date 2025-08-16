@@ -1,0 +1,38 @@
+---
+- name: Decide roles to generate
+  ansible.builtin.set_fact:
+    _chrony_roles: "{{ ['master'] if (single_node | default(false) | bool) else ['master','worker'] }}"
+
+- name: Ensure output dirs exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - "{{ working_dir }}/butane"                 # save .bu
+    - "{{ working_dir }}/install-dir/openshift"  # save .yaml
+
+# create .bu 
+- name: Render chrony .bu per role
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/tasks/butane/templates/chrony.conf.bu.j2"
+    dest: "{{ working_dir }}/butane/99-{{ role }}-chrony.bu"
+    mode: "0644"
+  loop: "{{ _chrony_roles }}"
+  loop_control:
+    loop_var: role
+
+# butane → YAML conversion
+- name: Build MachineConfig YAML from .bu per role
+  ansible.builtin.command: >
+    butane {{ working_dir }}/butane/99-{{ item }}-chrony.bu
+    -o {{ working_dir }}/install-dir/openshift/99-{{ item }}-chrony.yaml
+  loop: "{{ _chrony_roles }}"
+  changed_when: false
+
+- name: Show outputs
+  ansible.builtin.debug:
+    msg:
+      - "BU : {{ working_dir }}/butane/99-{{ item }}-chrony.bu"
+      - "YAML: {{ working_dir }}/install-dir/openshift/99-{{ item }}-chrony.yaml"
+  loop: "{{ _chrony_roles }}"

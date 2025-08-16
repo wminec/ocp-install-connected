@@ -1,0 +1,39 @@
+$TTL 1D
+@   IN SOA  ns.{{ base_domain }}. root.{{ base_domain }}. (
+        {{ ansible_date_time.date | replace('-', '') }}00 ; serial
+        1D      ; refresh
+        1H      ; retry
+        1W      ; expire
+        3H )    ; minimum
+    NS  ns.{{ base_domain }}.
+
+; bastion
+ns        IN A   {{ bastion_ip }}
+bastion   IN A   {{ bastion_ip }}
+registry  IN A   {{ bastion_ip }}
+
+{% if single_node | default(false) %}
+; ---- Single Node OCP (SNO) ----
+sno     IN A   {{ masters[0].ip }}
+
+{% else %}
+; ---- Multi-node Masters ----
+; Masters
+{% for master in masters %}
+{{ master.name }}   IN A   {{ master.ip }}
+{% endfor %}
+
+; Workers
+{% for worker in workers %}
+{{ worker.name }}   IN A   {{ worker.ip }}
+{% endfor %}
+
+; Infras
+{% for infra in infras %}
+{{ infra.name }}    IN A   {{ infra.ip }}
+{% endfor %}
+{% endif %}
+
+api        IN A   {{ bastion_ip }}
+api-int    IN A   {{ bastion_ip }}
+*.apps     IN A   {{ bastion_ip }}

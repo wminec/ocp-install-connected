@@ -1,0 +1,41 @@
+---
+- name: Build combined host list
+  ansible.builtin.set_fact:
+    _masters: "{{ masters | default([]) }}"
+    _workers: "{{ workers | default([]) }}"
+    _infras:  "{{ infras  | default([]) }}"
+    _all: "{{ (masters | default([])) + (workers | default([])) + (infras | default([])) }}"
+
+- name: Enforce SNO host count when single_node=true (fail-fast)
+  when: single_node | default(false) | bool
+  ansible.builtin.assert:
+    that: _all | length == 1
+    fail_msg: "single_node=true 이면 호스트는 정확히 1개여야 합니다."
+
+- name: Render agent-config.yaml
+  become: true
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/tasks/agent-config/templates/agent-config.yaml.j2"
+    dest: "{{ working_dir }}/agent-config.yaml"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Ensure install-dir exists
+  ansible.builtin.file:
+    path: "{{ working_dir/install_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Copy agent-config.yaml into install-dir
+  ansible.builtin.copy:
+    src: "{{ working_dir }}/agent-config.yaml"
+    dest: "{{ working_dir/install_dir }}/agent-config.yaml"
+    owner: root
+    group: root
+    mode: "0644"
+    remote_src: true
+
+- name: Show generated path
+  ansible.builtin.debug:
+    msg: "Generated: {{ working_dir }}/agent-config.yaml"

@@ -1,0 +1,96 @@
+---
+# 0) vars.yml 값 정규화(기본값/경로 확장 포함)
+- name: Normalize paths and defaults
+  ansible.builtin.set_fact:
+    _workdir: "{{ working_dir | default('/data') }}"
+    _ssh_key_path: "{{ (ssh_key_path | default('~/.ssh/id_rsa_ocp')) | expanduser }}"
+    _pull_secret_file: "{{ pull_secret_file | default(playbook_dir ~ '/pull-secret.json') }}"
+
+# 1) SSH 키: 없으면 생성
+- name: Check SSH public key
+  ansible.builtin.stat:
+    path: "{{ _ssh_key_path }}.pub"
+  register: _ssh_pub_stat
+
+- name: Generate SSH keypair if missing
+  ansible.builtin.command: >
+    ssh-keygen -t rsa -b 4096 -N '' -f "{{ _ssh_key_path }}"
+  args:
+    creates: "{{ _ssh_key_path }}"
+  when: not _ssh_pub_stat.stat.exists
+  become: true
+
+- name: Read SSH public key
+  ansible.builtin.slurp:
+    path: "{{ _ssh_key_path }}.pub"
+  register: _ssh_pub
+
+- name: Normalize SSH public key
+  ansible.builtin.set_fact:
+    _ssh_pubkey: "{{ _ssh_pub.content | b64decode | trim }}"
+
+# 2) pullSecret: 1) vars.yml의 pull_secret  2) 파일(_pull_secret_file)
+- name: Use pull_secret from vars.yml if provided
+  ansible.builtin.set_fact:
+    _pull_secret_text: "{{ pull_secret | trim | replace('\n','') }}"
+  when: pull_secret is defined and (pull_secret | length > 0)
+
+- name: Stat pull-secret.json
+  ansible.builtin.stat:
+    path: "{{ _pull_secret_file }}"
+  register: _ps_stat
+  when: _pull_secret_text is not defined
+
+- name: Load pull-secret.json
+  ansible.builtin.slurp:
+    path: "{{ _pull_secret_file }}"
+  register: _ps
+  when: _pull_secret_text is not defined and _ps_stat.stat.exists
+
+- name: Normalize pull secret text from file (JSON → one-line JSON string)
+  ansible.builtin.set_fact:
+    _pull_secret_text: "{{ (_ps.content | b64decode | from_json) | to_json }}"
+  when: _pull_secret_text is not defined and _ps_stat.stat.exists
+
+- name: Fail if pull-secret not provided anywhere
+  ansible.builtin.fail:
+    msg: >-
+      Pull secret이 없습니다. vars.yml의 pull_secret를 넣거나,
+      '{{ _pull_secret_file }}' 파일을 준비해 주세요.
+  when: _pull_secret_text is not defined
+
+# 3) 출력 디렉터리 보장
+- name: Ensure working dir exists
+  ansible.builtin.file:
+    path: "{{ _workdir }}"
+    state: directory
+    mode: "0755"
+
+# 4) install-config.yaml 렌더링
+- name: Render install-config.yaml
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/tasks/install-config/templates/install-config.yaml.j2"
+    dest: "{{ _workdir }}/install-config.yaml"
+    owner: root
+    group: root
+    mode: "0644"
+    newline_sequence: "\n"
+
+- name: Ensure install-dir exists
+  ansible.builtin.file:
+    path: "{{ working_dir/install_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Copy install-config.yaml into install-dir
+  ansible.builtin.copy:
+    src: "{{ working_dir }}/install-config.yaml"
+    dest: "{{ working_dir/install_dir }}/install-config.yaml"
+    owner: root
+    group: root
+    mode: "0644"
+    remote_src: true
+
+- name: Show generated file
+  ansible.builtin.debug:
+    msg: "Generated: {{ _workdir }}/install-config.yaml"

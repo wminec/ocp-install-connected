@@ -1,0 +1,80 @@
+---
+# -------- Disable Security Features --------
+- name: Disable firewalld service
+  service:
+    name: firewalld
+    state: stopped
+    enabled: no
+
+- name: Disable SELinux immediately
+  command: setenforce 0
+  when: ansible_selinux is defined and ansible_selinux.status == "enabled"
+  ignore_errors: true
+
+- name: Make SELinux permissive in config file
+  replace:
+    path: /etc/selinux/config
+    regexp: '^SELINUX=.*'
+    replace: 'SELINUX=disabled'
+
+# -------- Install required packages --------
+- name: Install required packages
+  package:
+    name:
+      - openssl
+      - haproxy
+      - bind
+      - wget
+      - nmstate
+      - bash-completion
+    state: present
+
+- name: Create working directory
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ working_dir }}"
+    - "{{ working_dir }}/templates"
+    - "{{ working_dir }}/install-dir"
+    - "{{ working_dir }}/install-dir/openshift"
+
+# -------- OpenShift Client (oc) --------
+- name: Download OpenShift client tarball
+  get_url:
+    url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/openshift-client-linux-{{ ocp_version }}.tar.gz"
+    dest: "{{ working_dir }}/openshift-client-linux-{{ ocp_version }}.tar.gz"
+    mode: '0644'
+
+- name: Extract OpenShift client
+  unarchive:
+    src: "{{ working_dir }}/openshift-client-linux-{{ ocp_version }}.tar.gz"
+    dest: "/usr/local/bin"
+    remote_src: true
+
+# -------- OpenShift Installer --------
+- name: Download OpenShift installer tarball
+  get_url:
+    url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/install-dir-linux-{{ ocp_version }}.tar.gz"
+    dest: "{{ working_dir }}/install-dir-linux-{{ ocp_version }}.tar.gz"
+    mode: '0644'
+
+- name: Extract OpenShift installer
+  unarchive:
+    src: "{{ working_dir }}/install-dir-linux-{{ ocp_version }}.tar.gz"
+    dest: "/usr/local/bin"
+    remote_src: true
+
+- name: Remove unnecessary README.md from /usr/local
+  file:
+    path: "/usr/local/README.md"
+    state: absent
+
+# -------- Butane --------
+- name: Download butane (Fedora CoreOS Config transpiler)
+  get_url:
+    url: "https://mirror.openshift.com/pub/openshift-v4/clients/butane/latest/butane"
+    dest: "/usr/local/bin/butane"
+    mode: '0755'

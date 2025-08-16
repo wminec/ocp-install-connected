@@ -1,0 +1,57 @@
+cluster_domain: "ocp4"
+base_domain: "sye010.home"
+single_node: false
+rendezvous_ip: "10.10.70.71"
+
+working_dir: "/data"
+ocp_version: "4.19.7"
+
+# haproxy optional
+haproxy_stats_enable: false
+haproxy_stats_bind: "0.0.0.0:1936"
+haproxy_stats_user: "admin"
+haproxy_stats_pass: "changeme"
+
+# DNS
+bastion_ip: "10.10.70.70"
+dns_forwarders:
+  - "8.8.8.8"
+  - "8.8.4.4"
+
+
+# OCP Node Config
+defaults:
+  nic_name: "enp1s0"
+  root_device: "/dev/sda"
+  prefix_length: 16
+  dhcp: false
+  gateway: "10.10.0.1"
+  dns_servers: ["192.168.70.70"]
+  nic_type: "ethernet"
+  nic_state: "up"
+  route_destination: "0.0.0.0/0"
+  route_table_id: 254
+
+masters:
+  - name: "master1"
+    ip: "10.10.70.71"
+    mac: "56:6f:54:a1:00:12"
+
+  - name: "master2"
+    ip: "10.10.70.72"
+    mac: "56:6f:54:a1:00:1e"
+
+  - name: "master3"
+    ip: "10.10.70.73"
+    mac: "56:6f:54:a1:00:1c"
+
+workers:
+  - name: "worker1"
+    ip: "10.10.70.74"
+    mac: "56:6f:54:a1:00:21"
+
+  - name: "worker2"
+    ip: "10.10.70.75"
+    mac: "56:6f:54:a1:00:22"
+
+infras: []

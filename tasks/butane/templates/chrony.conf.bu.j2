@@ -1,0 +1,21 @@
+# {{ role }} chrony MachineConfig (Butane)
+variant: openshift
+version: {{ (ocp_version | default('4.19.7')) | regex_replace('^(\\d+\\.\\d+)\\..*', '\\1.0') }}
+metadata:
+  name: 99-{{ role }}-chrony
+  labels:
+    machineconfiguration.openshift.io/role: {{ role }}
+storage:
+  files:
+  - path: /etc/chrony.conf
+    mode: 0644
+    overwrite: true
+    contents:
+      inline: |
+{% for s in (chrony_servers | default(['0.rhel.pool.ntp.org'])) %}
+        pool {{ s }} iburst
+{% endfor %}
+        driftfile /var/lib/chrony/drift
+        makestep 1.0 3
+        rtcsync
+        logdir /var/log/chrony
