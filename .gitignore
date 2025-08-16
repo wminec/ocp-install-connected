@@ -2,3 +2,4 @@
 # Ensure OpenShift pull secret never gets committed
 pull-secret.json
 pull_secret.json
+.vscode
