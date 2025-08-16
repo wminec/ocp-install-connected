@@ -58,12 +58,12 @@
 - name: Download OpenShift installer tarball
   get_url:
     url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/openshift-install-linux-{{ ocp_version }}.tar.gz"
-    dest: "{{ working_dir }}/install_dir-linux-{{ ocp_version }}.tar.gz"
+    dest: "{{ working_dir }}/openshift-install-linux-{{ ocp_version }}.tar.gz"
     mode: '0644'
 
 - name: Extract OpenShift installer
   unarchive:
-    src: "{{ working_dir }}/install_dir-linux-{{ ocp_version }}.tar.gz"
+    src: "{{ working_dir }}/openshift-install-linux-{{ ocp_version }}.tar.gz"
     dest: "/usr/local/bin"
     remote_src: true
 
