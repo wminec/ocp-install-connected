@@ -50,4 +50,6 @@
 
 - name: Show kubeadmin-password
   ansible.builtin.debug:
-    msg: "kubeadmin password: {{ _kubeadmin_pw.content | b64decode | trim }}"
+    msg:
+      - You need to Change the bastion's DNS server to the bastion itself.
+      - "kubeadmin password: {{ _kubeadmin_pw.content | b64decode | trim }}"
