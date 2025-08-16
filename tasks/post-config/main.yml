@@ -51,5 +51,9 @@
 - name: Show kubeadmin-password
   ansible.builtin.debug:
     msg:
-      - You need to Change the bastion's DNS server to the bastion itself.
+      - You need to Change the bastion's DNS server to the bastion itself. 
+      - use nmcli command like this. 
+      - $ nmcli connection modify enp0s3 ipv4.dns "10.0.2.10"
+      - $nmcli connection up enp0s3
+      - "You can now access the cluster using the kubeadmin user."
       - "kubeadmin password: {{ _kubeadmin_pw.content | b64decode | trim }}"
