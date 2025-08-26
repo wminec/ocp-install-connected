@@ -1,6 +1,6 @@
 # Directory config
 working_dir: "/data"
-ssh_key_path: "~/.ssh/id_rsa_ocp"
+ssh_key_path: "~/.ssh/id_rsa"
 pull_secret_file: "{{ playbook_dir }}/pull-secret.json"
 
 # haproxy optional
@@ -23,7 +23,6 @@ ocp_version: "4.19.7"
 cluster_domain: "ocp4"
 base_domain: "sye010.home"
 single_node: true
-masters_schedulable: true
 
 # OCP install-config
 machine_network_cidr: "10.0.2.0/24"
@@ -48,10 +47,29 @@ defaults:
   route_table_id: 254
 
 masters:
-  - name: "sno"
-    ip: "10.0.2.11"
-    mac: "08:00:27:6E:FE:31"
+#  - name: "sno"
+#    ip: "10.0.2.11"
+#    mac: "08:00:27:6E:FE:31"
+  - name: "master1"
+    ip: "10.10.70.71"
+    mac: "56:6f:54:a1:00:12"
 
-workers: []
+  - name: "master2"
+    ip: "10.10.70.72"
+    mac: "56:6f:54:a1:00:1e"
 
+  - name: "master3"
+    ip: "10.10.70.73"
+    mac: "56:6f:54:a1:00:1c"
+
+#workers: []
+workers:
+  - name: "worker1"
+    ip: "10.10.70.74"
+    mac: "56:6f:54:a1:00:21"
+
+  - name: "worker2"
+    ip: "10.10.70.75"
+    mac: "56:6f:54:a1:00:22"
+    
 infras: []

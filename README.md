@@ -11,8 +11,7 @@ Bastion에서 **로컬 실행**하여 OpenShift를 **Agent-Based** 방식으로 
 
 ## 설치 전 실행해야 할 명령어
 ```bash
-dnf install epel-release -y
-dnf install ansible -y
+dnf install ansible-core -y
 git clone https://github.com/wminec/ocp-install-connected.git
 
 vi pull-secret.json

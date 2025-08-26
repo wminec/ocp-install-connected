@@ -1,10 +1,7 @@
-cluster_domain: "ocp4"
-base_domain: "sye010.home"
-single_node: false
-rendezvous_ip: "10.10.70.71"
-
+# Directory config
 working_dir: "/data"
-ocp_version: "4.19.7"
+ssh_key_path: "~/.ssh/id_rsa"
+pull_secret_file: "{{ playbook_dir }}/pull-secret.json"
 
 # haproxy optional
 haproxy_stats_enable: false
@@ -13,20 +10,37 @@ haproxy_stats_user: "admin"
 haproxy_stats_pass: "changeme"
 
 # DNS
-bastion_ip: "10.10.70.70"
+bastion_ip: "10.0.2.10"
 dns_forwarders:
   - "8.8.8.8"
-  - "8.8.4.4"
 
+# butane config
+chrony_servers:
+  - "0.rhel.pool.ntp.org"
 
-# OCP Node Config
+# OCP basic Config
+ocp_version: "4.19.7"
+cluster_domain: "ocp4"
+base_domain: "sye010.home"
+single_node: false
+
+# OCP install-config
+machine_network_cidr: "10.0.2.0/24"
+cluster_network_cidr: "10.128.0.0/14"
+cluster_network_hostprefix: 23
+service_network_cidr: "172.30.0.0/16"
+network_type: "OVNKubernetes"
+fips: false
+
+#OCP Node Config
+rendezvous_ip: "10.0.2.11"
 defaults:
-  nic_name: "enp1s0"
+  nic_name: "enp0s3"
   root_device: "/dev/sda"
-  prefix_length: 16
+  prefix_length: 24
   dhcp: false
-  gateway: "10.10.0.1"
-  dns_servers: ["192.168.70.70"]
+  gateway: "10.0.2.2"
+  dns_servers: ["10.0.2.10"]
   nic_type: "ethernet"
   nic_state: "up"
   route_destination: "0.0.0.0/0"

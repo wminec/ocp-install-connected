@@ -116,7 +116,8 @@ listen ingress-router-80
 
 {# ===== HA: masters / (workers + infras) ===== #}
 {% else %}
-{%   set ingress_targets = workers_ + infras_ %}
+{%   set _wi = workers_ + infras_ %}
+{%   set ingress_targets = _wi if (_wi | length > 0) else masters_ %}
 
 listen api-server-6443
     bind *:6443
