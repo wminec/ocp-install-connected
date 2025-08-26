@@ -1,11 +1,11 @@
 $TTL 1D
-@   IN SOA  ns.{{ base_domain }}. root.{{ base_domain }}. (
+@   IN SOA  ns.{{ cluster_domain}}.{{ base_domain }}. root.{{ cluster_domain}}.{{ base_domain }}. (
         {{ ansible_date_time.date | replace('-', '') }}00 ; serial
         1D      ; refresh
         1H      ; retry
         1W      ; expire
         3H )    ; minimum
-    NS  ns.{{ base_domain }}.
+    NS  ns.{{ cluster_domain}}.{{ base_domain }}.
 
 ; bastion
 ns        IN A   {{ bastion_ip }}

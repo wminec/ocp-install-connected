@@ -3,7 +3,7 @@ working_dir: "/data"
 ssh_key_path: "~/.ssh/id_rsa"
 pull_secret_file: "{{ playbook_dir }}/pull-secret.json"
 
-# haproxy optional
+# haproxy (optional)
 haproxy_stats_enable: false
 haproxy_stats_bind: "0.0.0.0:1936"
 haproxy_stats_user: "admin"
@@ -22,7 +22,7 @@ chrony_servers:
 ocp_version: "4.19.7"
 cluster_domain: "ocp4"
 base_domain: "sye010.home"
-single_node: true
+single_node: false
 
 # OCP install-config
 machine_network_cidr: "10.0.2.0/24"
@@ -71,5 +71,5 @@ workers:
   - name: "worker2"
     ip: "10.10.70.75"
     mac: "56:6f:54:a1:00:22"
-    
+
 infras: []
