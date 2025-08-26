@@ -37,7 +37,6 @@
     mode: '0755'
   loop:
     - "{{ working_dir }}"
-    - "{{ working_dir }}/templates"
     - "{{ working_dir }}/install_dir"
     - "{{ working_dir }}/install_dir/openshift"
 
